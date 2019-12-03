@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 기업체 회원 가입 -->
+
+
+<mapper namespace="kr.kosmo.jobkorea.office.dao.ComnDAO">
+									
+     <select id="OfficeMemInfo" resultType="kr.kosmo.jobkorea.office.dto.OfficeMemberDTO" parameterType="Map">
+                      
+           /*kr.kosmo.jobkorea.office.dao.OfficeMemberDAO */
+           
+          SELECT user_id
+               , user_name
+               , en_name
+               , email1
+               , email2
+               , email_select
+               , birth
+               , ph1
+               , ph2
+               , ph3	
+	        FROM tb_regoffice	
+		   WHERE officeId = #{officeId}
+     </select>
+
+
+     <select id="OfficeMemList" resultType="kr.kosmo.jobkorea.office.dto.OfficeMemberDTO" parameterType="Map">
+
+		/* kr.kosmo.jobkorea.office.dto.OfficeMemberDTO */
+
+         SELECT officeId 
+          ,password 
+          ,mgr_name
+          ,email1
+          ,email2
+          ,email_select
+          ,birth
+          ,ph1
+          ,ph2
+          ,ph3
+          ,company_info
+	     FROM tb_regoffice	
+	
+	
+	</select>
+
+
+
+	<insert id="insertComnGrpCod" parameterType="Map">
+
+     	insert into tb_regoffice
+            	(
+               		officeId
+                , 	password
+             	, 	mgr_name,
+             	office_name,
+             	email1,
+             	email2,
+             	email_select,
+             	birth,
+             	ph1,
+             	ph2,
+             	ph3,
+             	company_info
+      	)	VALUES (
+	    	       	 #{officeId}
+	        	   	,#{password}
+	           		,#{mgr_name}
+	           		,#{office_name}
+	           		,#{email1}
+					,#{email2}
+					,#{email_select}
+					,#{birth}
+					,#{ph1}
+					,#{ph2}
+					,#{ph3}
+					,#{company_info}
+		)
+	</insert>
+
+
+
+	<update id="updateComnGrpCod"  parameterType="Map">
+		
+			update tb_userinfo 
+			   set email = #{email},
+				   ,email_cop = #{email_cop},
+				   ,tel1 = #{tel1}
+				   ,tel2 = #{tel2} 
+				   ,tle3 = #{tel3}
+				   ,password = #{password}
+				   ,manager_name = #{manager_name}
+				   ,COMPANY_INFO = #{company_info}
+				   ,updateId = #loginId#
+				   ,update_date = now()
+			 where loginID = ##
+			   and user_type = 'C'
+			  	
+	</update>
+
+
+	<delete id="OfficeMemDelete" parameterType="Map">
+	
+		delete from tb_regoffice
+		
+			where officeId = #{officeId}
+	
+	</delete>
+
+</mapper>
+

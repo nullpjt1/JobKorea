@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.kosmo.jobkorea.commonbiz.dao.QnaDAO">
+
+	<!-- Qna 게시판 수 구하기  -->
+	<select id="selectQnaListCnt" resultType="int">
+		select count(*) as cnt from tb_qna2
+		
+	</select>
+	
+	<!-- Qna 게시판 리스트 뿌리기 -->
+	<select id="selectQnaList" resultType="kr.kosmo.jobkorea.commonbiz.model.QnaListVO">
+		SELECT	@num:=@num+1 as num2	
+		    ,   num
+			,	writer
+			,	pwd
+			,	subject
+			,	content
+			,	readCnt
+			,	ref
+			,	ref_step
+			,	ref_level
+			,	date_format(reg_date, '%Y-%m-%d') as reg_date
+		FROM	tb_qna2
+		WHERE (@num:=#{pageIndex})=#{pageIndex}
+		ORDER BY reg_date DESC
+		LIMIT #{pageIndex}, #{pageSize}
+	</select>
+	
+	
+	
+	
+	<!-- Qna 게시판 1건 상세정보 -->
+	<select id="selectDetail" resultType="kr.kosmo.jobkorea.commonbiz.model.QnaListVO">
+		select num, writer, pwd, subject, content, readCnt, ref, ref_step, ref_level, date_format(reg_date, '%Y-%m-%d') as reg_date 
+			from tb_qna2 where num = #{num}
+	</select>
+	
+	<!-- num 값  +1 하기 / 신규 저장시 사용 (최대 num값 구해서 더할거임) -->
+	<select id="numPlus" resultType="int">
+	 select (IFNULL(MAX(num),0) + 1) as num from tb_qna2
+	</select>
+	
+	<!-- 조회수 +1 하기 -->
+	<update id="addReadCnt" parameterType="java.util.Map">
+		update tb_qna2 set readCnt = readCnt + 1 where num = #{num}
+	</update>
+	
+	<!-- Qna 게시판 1건 추가 / 신규등록   -->
+	<insert id="insertOne" parameterType="java.util.Map">
+		insert into tb_qna2 (num,writer, pwd, subject,content) 
+			VALUES (#{num}, #{writer}, #{pwd}, #{subject}, #{content})
+	</insert>
+	
+	<!-- Qna 게시판 1건 수정  -->
+	<update id="updateOne" parameterType="java.util.Map">
+		update tb_qna2
+			set subject = #{subject}, content = #{content}
+		where num = #{num}
+	</update>
+	
+	<!-- Qna 게시판 1건 삭제  -->
+	<delete id="deleteOne" parameterType="java.util.Map">
+		delete from tb_qna2 where num = #{num}
+	</delete>
+
+</mapper>

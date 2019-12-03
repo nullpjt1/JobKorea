@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.kosmo.jobkorea.roomlist.dao.RoomDAO">
+
+	<select id="SelectRoomList" resultType="kr.kosmo.jobkorea.roomlist.model.RoomListModel">
+		SELECT @rownum:=@rownum+1 as row_num,
+		       wno,
+				title,
+				note,
+				reg_date,
+				regId,
+				file_name
+		 FROM tb_room
+		WHERE (@rownum:=#{pageIndex})=#{pageIndex}
+		LIMIT #{pageIndex}, #{pageSize} 
+	</select>
+
+	<select id="countRoomlist" resultType="int">
+		SELECT COUNT(1) FROM tb_room
+	</select>
+
+	<select id="insertkey" resultType="String">
+		 SELECT CONCAT('b_',LPAD(cast((cast(SUBSTR(ifnull(max(wno),'b_00000'),3) as unsigned) + 1) as char(5)),5,'0')) as wno        
+			FROM tb_room
+   </select>
+
+	<!-- 신규등록 저장 -->
+	<insert id="insertRoom">
+
+		INSERT INTO tb_room
+			(wno,title,note,reg_date,regId ,file_name,file_path, file_size )
+		VALUES 
+			(#{wno},#{title},#{note},NOW(),#{regId},#{file_name},#{file_path},#{file_size})
+	</insert>
+
+	<!-- 기존정보 저장  -->
+	<update id="updateRoom">
+		UPDATE tb_room SET 
+			title =#{title},
+			note = #{note},
+			reg_date =now(),
+			regId =#{regId},
+			file_name =#{file_name},
+			file_path = #{file_path},
+			file_size = #{file_size}
+		WHERE wno=#{wno}
+			
+	</update>
+	
+	
+	<select id="ViewRoom" resultType="kr.kosmo.jobkorea.roomlist.model.RoomListModel">
+		SELECT 
+			wno,title,note,reg_date,regId,file_name
+		FROM tb_room
+		WHERE wno = #{wno}
+	</select> 
+
+
+	<delete id="deleteRoom">
+		DELETE FROM tb_room WHERE wno=#{wno}
+	</delete>
+
+
+
+
+
+
+</mapper>

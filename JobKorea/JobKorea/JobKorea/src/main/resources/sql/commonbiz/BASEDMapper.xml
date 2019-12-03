@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.kosmo.jobkorea.commonbiz.dao.BASEDDAO">
+	
+	<!-- 프로젝트 지원목록 -->
+	<select id="selectProjectList" resultType="kr.kosmo.jobkorea.adm.dto.AdmUserDTO">
+		/*kr.kosmo.jobkorea.commonbiz.dao.BASEDDAO.selectProjectList*/
+		
+		SELECT p.project_name,
+			   p.regId,
+			   ai.aid_date
+		  FROM tb_aid_info ai inner join tb_project_info p
+		    on ai.projectId = p.projectId		
+		 	  left outer join tb_userinfo u
+		 	on ai.loginId = u.loginId
+		 WHERE u.name = #{name}		   	   
+	
+	</select>
+	
+	<select id="selectApplyProject" resultType="kr.kosmo.jobkorea.adm.dto.AdmUserDTO">
+		/*kr.kosmo.jobkorea.commonbiz.dao.BASEDDAO.selectApplyProject*/
+		
+		SELECT p.project_name,			   
+			   ai.update_date,
+			   p.projectId
+		  FROM tb_aid_info ai inner join tb_project_info p
+		    on ai.projectId = p.projectId		
+		 	  left outer join tb_userinfo u
+		 	on ai.loginId = u.loginId
+		 WHERE p.project_name LIKE concat('%', #{project_name}, '%') 		   	   
+	
+	</select>
+	
+	<!-- 프로젝트 인원 목록 -->
+	<select id="listPerson" resultType="kr.kosmo.jobkorea.adm.dto.AdmUserDTO">
+		/*kr.kosmo.jobkorea.commonbiz.dao.BASEDDAO.listPerson*/
+		SELECT @rownum:=@rownum+1 as row_num,
+			   ui.name as name,
+			   uc.title as title,
+			   ui.area as area,
+			   uc.addtec as addtec
+		  FROM tb_userinfo ui inner join tb_user_career uc
+		    on ui.loginId = uc.loginId
+		       left outer join tb_aid_info ai
+		    on ui.loginId = ai.loginId
+		       left outer join tb_project_info p
+		    on ai.projectId = p.projectId		       
+		 WHERE (@rownum:=0)=0
+		   AND ai.projectId = #{projectId}
+		 ORDER BY ui.loginId
+	     <if test="(pageIndex != null) and (!pageIndex.equals('')) and (pageSize != null) and (!pageSize.equals(''))">
+	     LIMIT #{pageIndex}, #{pageSize}
+	     </if>
+	</select>
+	
+	<!-- 프로젝트 인원 카운트 -->
+	<select id="countListProject" resultType="int">
+		/*kr.kosmo.jobkorea.commonbiz.dao.BASEDDAO.countListProject*/
+		SELECT COUNT(1) AS cnt 
+		  FROM tb_userinfo ui join tb_user_career uc
+		    on ui.loginId = uc.loginId
+		 WHERE ui.loginId = #{loginId}
+		
+	</select>	
+</mapper>
