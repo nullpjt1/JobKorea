@@ -16,7 +16,7 @@
 <jsp:include page="/WEB-INF/view/common/common_include.jsp"></jsp:include>
 <style type="text/css">
 
- 
+  
 </style>
 
 <script type="text/javascript">
